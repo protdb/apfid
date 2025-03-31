@@ -5,18 +5,13 @@ with open("README.MD", "r", encoding="utf-8") as fh:
 
 setup(
     name="apfid",
-    version="0.1.0",
+    version="0.2.0",
     author="Laboratory of structural proteomics in the IBMC",
     author_email="kirill.s.nikolsky@yandex.ru",
     description="APFID - Arbitrary Protein Fragment IDentifier parser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/protdb/apfid",
-    project_urls={
-        "Bug Tracker": "https://github.com/protdb/apfid/issues",
-        "Source Code": "https://github.com/protdb/apfid",
-        "Documentation": "https://github.com/protdb/apfid",
-    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
@@ -28,6 +23,8 @@ setup(
     ],
     packages=find_packages(),
     python_requires=">=3.10",
+    license="MIT",
+    license_file="LICENSE",
     install_requires=[
     ],
     keywords="protein structure bioinformatics fragment identifier pdb alphafold",

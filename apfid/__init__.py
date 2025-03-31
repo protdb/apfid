@@ -3,6 +3,36 @@ import re
 from typing import Union
 import warnings
 
+
+class AlphafoldId:
+    prefix = 'AF'
+    uniprot_id = 'UNKNOWN'
+    file_no = 1
+    version = 4
+
+    _file_no_rg = re.compile(r'[Ff]{1}(?P<no>\d+)')
+    _version_rg = re.compile(r'[vV]{1}(?P<no>\d+)')
+
+    def __init__(self, alphafold_id: str):
+        af_params = re.split('[_-]', alphafold_id)
+        if af_params[0].upper() != 'AF':
+            raise ValueError(f'Alphafold id {alphafold_id} does not start with AF')
+        self.uniprot_id = af_params[1]
+        if len(af_params) > 2:
+            self.file_no = int(self._file_no_rg.search(af_params[2]).group('no'))
+        if len(af_params) > 3:
+            self.version = int(self._version_rg.search(af_params[-1]).group('no'))
+
+    def __str__(self):
+        return f"{self.prefix}-{self.uniprot_id}-F{self.file_no}-v{self.version}"
+
+    def get_dl_id(self) -> str:
+        return f"{self.prefix}-{self.uniprot_id}-F{self.file_no}-model_v{self.version}"
+
+    def get_psskb_id(self):
+        return f"{self.prefix}-{self.uniprot_id}-F{self.file_no}-V{self.version}"
+
+
 _RG_APFID_V1_FULL = re.compile(
     r"(?P<experiment_id>[A-Za-z0-9-]+)_(?P<chain_id>[A-Za-z]{1,2})(?P<start>\d+)[-_](?P<chain2_id>[A-Zaz]{1,2})(?P<end>\d+)"
 )
@@ -27,6 +57,7 @@ class Apfid:
     end: Union[int, None]
     id_type: str
     source: str
+    af_id: AlphafoldId | None = None
 
     def __init__(self, experiment_id='', chain_id='', start=None, end=None, model=0, chain2_id=None, apfid=None, version=1):
         logging.debug(f"{experiment_id} {chain_id} {start} {end}")
@@ -52,7 +83,7 @@ class Apfid:
             self._parse_apfid()
         self._set_experiment_type()
 
-    def set_version(self, version):
+    def set_version(self, version: int):
         self.version = version
         self._make_apfid()
 
@@ -62,16 +93,22 @@ class Apfid:
         else:
             if self.experiment_id.startswith('AF'):
                 self.source = "Alphafold"
+                self.af_id = AlphafoldId(self.experiment_id)
+                self.experiment_id = self.af_id.get_dl_id()
             elif self.experiment_id.startswith('USR'):
                 self.source = "UserUpload"
             else:
                 self.source = "Unknown"
-        self.id_type = self.source
+        self.id_type = self.source # compatibility
 
     def _make_apfid(self, lower=False, version=None):
         if version is None:
             version = self.version
-        exp_id = self.experiment_id.lower() if lower else self.experiment_id.upper()
+        if self.af_id is not None:
+            exp_id = self.af_id.get_psskb_id()
+        else:
+            exp_id = self.experiment_id
+        exp_id = exp_id.lower() if lower else exp_id.upper()
 
         if version == 1:
             if self.start == self.end:
