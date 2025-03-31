@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools==75.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "apfid"
+version = "0.2.0"
+authors = [
+    {name = "Laboratory of structural proteomics in the IBMC", email = "kirill.s.nikolsky@yandex.ru"},
+]
+description = "APFID - Arbitrary Protein Fragment IDentifier parser"
+readme = "README.MD"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Bio-Informatics", 
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["protein", "structure", "bioinformatics", "fragment", "identifier", "pdb", "alphafold"]
+
+[project.urls]
+Homepage = "https://github.com/protdb/apfid"
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+# где искать пакеты
+where = ["."]
