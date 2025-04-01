@@ -34,3 +34,15 @@ class TestAlphafoldApfids:
         assert apfid.end == 50
         assert apfid.af_id.uniprot_id == 'A1KHV0'
         assert apfid.version == 2
+
+    def test_af_other_opts(self):
+        apfid = parse_apfid("AF-A1KHV0-F1-model-v4_A")
+        assert apfid.source == 'Alphafold'
+        assert apfid.af_id is not None
+        assert apfid.af_id.uniprot_id == 'A1KHV0'
+        assert apfid.experiment_id == 'AF-A1KHV0-F1-model_v4'
+
+    def test_id_forms(self):
+        apfid = parse_apfid("AF-A1KHV0-F1-V4_A")
+        assert apfid.af_id.get_dl_id() == "AF-A1KHV0-F1-model_v4"
+        assert apfid.af_id.get_psskb_id() == "AF-A1KHV0-F1-V4"
